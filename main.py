@@ -1,3 +1,7 @@
+from datetime import date, datetime
+import json
+import shlex
+
 print("Welcome to the Task Tracker CLI!")
 
 print("\n\nCommands: ")
@@ -12,7 +16,8 @@ def main():
     while True:
         command = input("\ntask-cli ")
         
-        args_amount = len(command.split())
+        split_command = shlex.split(command)
+        args_amount = len(split_command)
         needed_args = {
             "add": 2,
             "update": 3,
@@ -23,31 +28,31 @@ def main():
         }
         
         #check if the command is valid
-        if needed_args.get(command.split()[0]) is None:
+        if needed_args.get(split_command[0]) is None:
             print("Invalid command. Please try again.")
             continue
 
         #check if the command has the correct number of arguments
-        if args_amount < needed_args.get(command.split()[0]):
-            print(f"Too few arguments for command '{command.split()[0]}'. Please try again.")
+        if args_amount < needed_args.get(split_command[0]):
+            print(f"Too few arguments for command '{split_command[0]}'. Please try again.")
             continue
 
         #choose which command to execute
-        match command.split()[0]:
+        match split_command[0]:
             case "add":
-                add_task(command.split()[1])
+                add_task(split_command[1])
             
             case "update":
-                update_task(command.split()[1], command.split()[2])
+                update_task(split_command[1], split_command[2])
             
             case "delete":
-                delete_task(command.split()[1])
+                delete_task(split_command[1])
 
             case "mark":
-                mark_task(command.split()[1], command.split()[2])
+                mark_task(split_command[1], split_command[2])
             
             case "list":
-                list_tasks(command.split()[1])
+                list_tasks(split_command[1])
             
             case "exit":
                 print("Exiting the application. Goodbye!")
@@ -56,9 +61,28 @@ def main():
             case _:
                 print("Unknown command. Please try again.")
 
+
 def add_task(task_name):
-    # Logic to add a task
-    pass
+ 
+    tasks = []
+    try:
+        with open("tasks.json", "r") as f:
+            tasks = json.load(f)
+    except FileNotFoundError:
+        pass
+
+    new_task = {
+        "id": get_id(),
+        "name": task_name,
+        "state": "busy",
+        "created_at": datetime.now().today().isoformat(),
+        "updated_at": datetime.now().today().isoformat()
+    }
+    
+    tasks.append(new_task)
+    
+    with open("tasks.json", "w") as f:
+        json.dump(tasks, f, indent=4)
 
 def update_task(task_id, new_task_name):
     # Logic to update a task
@@ -75,5 +99,9 @@ def mark_task(task_id, new_state):
 def list_tasks(state=None):
     # Logic to list tasks
     pass
+
+
+def get_id():
+    return 0
 
 main()
