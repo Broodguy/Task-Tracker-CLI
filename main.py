@@ -83,14 +83,53 @@ def add_task(task_name):
     
     with open("tasks.json", "w") as f:
         json.dump(tasks, f, indent=4)
+        
+    print(f"Task '{task_name}' added successfully.")
 
 def update_task(task_id, new_task_name):
-    # Logic to update a task
-    pass
+    tasks = []
+    try:
+        with open("tasks.json", "r") as f:
+            tasks = json.load(f)
+    except FileNotFoundError:
+        print("Task not found.")
+        return
+
+    changed = False
+    for task in tasks:
+        if task["id"] == int(task_id):
+            task["name"] = new_task_name
+            task["updated_at"] = datetime.now().today().isoformat()
+            changed = True
+            break
+
+    if not changed:
+        print("Task not found.")
+        return
+
+    with open("tasks.json", "w") as f:
+        json.dump(tasks, f, indent=4)
+    
+    print(f"Task with id '{task_id}' updated successfully.")
 
 def delete_task(task_id):
-    # Logic to delete a task
-    pass
+    tasks = []
+    try:
+        with open("tasks.json", "r") as f:
+            tasks = json.load(f)
+    except FileNotFoundError:
+        print("Task not found.")
+        return
+    
+    new_data = []
+    for task in tasks:
+        if task["id"] != int(task_id):
+            new_data.append(task)
+
+    with open("tasks.json", "w") as f:
+        json.dump(new_data, f, indent=4)
+
+    print(f"Task with id '{task_id}' deleted successfully.")
 
 def mark_task(task_id, new_state):
     # Logic to mark a task
