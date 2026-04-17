@@ -4,7 +4,7 @@ print("\n\nCommands: ")
 print("\tadd *task name* - Add a new task")
 print("\tupdate *task id* *new task name* - Update an existing task")
 print("\tdelete *task id* - Delete a task")
-print("\tmark *new state* *id* - Mark a task as busy or done")
+print("\tmark *task id* *new state* - Mark a task as busy or done")
 print("\tlist *state* - List tasks by state (busy, done, nothing = all)")
 print("\texit - Exit the application")
 
@@ -12,7 +12,7 @@ def main():
     while True:
         command = input("\ntask-cli ")
         
-        args_amount = len(command.split())  
+        args_amount = len(command.split())
         needed_args = {
             "add": 2,
             "update": 3,
@@ -28,35 +28,30 @@ def main():
             continue
 
         #check if the command has the correct number of arguments
-        if args_amount != needed_args.get(command.split()[0]):
-            print(f"Invalid number of arguments for command '{command.split()[0]}'. Please try again.")
+        if args_amount < needed_args.get(command.split()[0]):
+            print(f"Too few arguments for command '{command.split()[0]}'. Please try again.")
             continue
 
         #choose which command to execute
         match command.split()[0]:
             case "add":
-                #Logic to add a task
-                break
+                add_task(command.split()[1])
             
             case "update":
-                #Logic to update a task
-                break
+                update_task(command.split()[1], command.split()[2])
             
             case "delete":
-                #Logic to delete a task
-                break
-            
+                delete_task(command.split()[1])
+
             case "mark":
-                #Logic to mark a task
-                break
+                mark_task(command.split()[1], command.split()[2])
             
             case "list":
-                #Logic to list tasks
-                break
+                list_tasks(command.split()[1])
             
             case "exit":
-                print("Exiting the application.")
-                break
+                print("Exiting the application. Goodbye!")
+                return
             
             case _:
                 print("Unknown command. Please try again.")
